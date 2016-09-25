@@ -1,9 +1,12 @@
 package com.opensoft.motanx.rpc.protocol;
 
+import com.opensoft.motanx.core.ExtensionLoader;
 import com.opensoft.motanx.core.URL;
 import com.opensoft.motanx.core.UrlConstants;
+import com.opensoft.motanx.demo.AnotherService;
 import com.opensoft.motanx.demo.DemoPojo;
 import com.opensoft.motanx.demo.DemoService;
+import com.opensoft.motanx.demo.impl.AnotherServiceImpl;
 import com.opensoft.motanx.demo.impl.DemoServiceImpl;
 import com.opensoft.motanx.logger.Logger;
 import com.opensoft.motanx.logger.LoggerFactory;
@@ -24,17 +27,22 @@ import java.util.concurrent.CountDownLatch;
 public class ProtocolBaseTest {
     private static final Logger log = LoggerFactory.getLogger(ProtocolBaseTest.class);
     protected URL url;
+    protected URL anotherUrl;
     protected Provider<DemoService> provider;
+    protected Provider<AnotherService> anotherProvider;
     protected DefaultRequest request;
-    protected Protocol protocol = new HessianProtocol();
+    protected Protocol protocol;
 
     public void prepare(String protocolName, int port, String server) {
         url = new URL(protocolName, "localhost", port, "com.opensoft.motanx.demo.DemoService");
         url.setParameter(UrlConstants.server.getName(), server);
         provider = new DefaultProvider<>(DemoService.class, url, new DemoServiceImpl());
+        anotherUrl = new URL(protocolName, "localhost", port, "com.opensoft.motanx.demo.AnotherService");
+        anotherProvider = new DefaultProvider<>(AnotherService.class, anotherUrl, new AnotherServiceImpl());
         request = new DefaultRequest();
         request.setInterfaceName("com.opensoft.motanx.demo.DemoService");
         request.setMethodName("hello");
+        protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(protocolName);
     }
 
     public void after() {
@@ -65,6 +73,12 @@ public class ProtocolBaseTest {
     public Response test_on_single_string() {
         protocol.export(provider);
         Provider<DemoService> refer = protocol.refer(DemoService.class, url);
+        return refer.invoke(request);
+    }
+
+    public Response test_on_another_provider() {
+        protocol.export(anotherProvider);
+        Provider<AnotherService> refer = protocol.refer(AnotherService.class, anotherUrl);
         return refer.invoke(request);
     }
 

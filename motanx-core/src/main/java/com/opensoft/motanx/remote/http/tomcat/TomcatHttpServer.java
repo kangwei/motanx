@@ -1,16 +1,20 @@
 package com.opensoft.motanx.remote.http.tomcat;
 
 import com.opensoft.motanx.core.URL;
+import com.opensoft.motanx.core.UrlConstants;
 import com.opensoft.motanx.exception.MotanxFrameworkException;
 import com.opensoft.motanx.remote.http.HttpServer;
 import com.opensoft.motanx.remote.http.support.AbstractHttpServer;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 
 import javax.servlet.Servlet;
 
 /**
+ * embedded tomcat
+ * //TODO:set tomcat config, for example : maxThread, minThread etc.
  * Created by kangwei on 2016/9/23.
  */
 public class TomcatHttpServer extends AbstractHttpServer implements HttpServer {
@@ -33,7 +37,12 @@ public class TomcatHttpServer extends AbstractHttpServer implements HttpServer {
     @Override
     protected boolean doInit() {
         tomcat = new Tomcat();
-        tomcat.setPort(url.getPort());
+        int threadNum = url.getIntParameter(UrlConstants.threadNum.getName(), UrlConstants.threadNum.getInt());
+        tomcat.getConnector().setProtocol("org.apache.coyote.http11.Http11NioProtocol");
+        tomcat.getConnector().setURIEncoding("UTF-8");
+        tomcat.getConnector().setAttribute("maxThreads", threadNum);
+        tomcat.getConnector().setPort(url.getPort());
+//        tomcat.setPort(url.getPort());
         ctx = tomcat.addContext("/", mWorkingDir);
         try {
             tomcat.start();

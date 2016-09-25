@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -28,18 +27,37 @@ public class ExtensionLoader<T> {
 
     public static final String PREFIX = "spis/";
 
+    /**
+     * local extensionLoader cache, same class, init one time
+     */
     private static ConcurrentMap<Class<?>, ExtensionLoader> extensionLoaderMap = Maps.newConcurrentMap();
 
+    /**
+     * singleton instances cache
+     */
     private ConcurrentMap<String, T> singletonInstances = Maps.newConcurrentMap();
 
+    /**
+     * extension class cache
+     */
     private ConcurrentMap<String, Class<T>> extensionClasses = Maps.newConcurrentMap();
 
+    /**
+     * spi class
+     */
     private Class<T> type;
 
     private ClassLoader classLoader;
 
     private volatile boolean init = false;
 
+    /**
+     * get extensionLoader instance by spi class
+     *
+     * @param type spi
+     * @param <T>  Generic
+     * @return extensionLoader instance
+     */
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         checkType(type);
 
@@ -72,11 +90,6 @@ public class ExtensionLoader<T> {
     private ExtensionLoader(Class<T> type) {
         this.type = type;
         this.classLoader = Thread.currentThread().getContextClassLoader();
-    }
-
-    private ExtensionLoader(Class<T> type, ClassLoader classLoader) {
-        this.type = type;
-        this.classLoader = classLoader;
     }
 
     public Class<T> getExtensionClass(String name) {

@@ -5,14 +5,13 @@ import com.opensoft.motanx.demo.DemoService;
 import com.opensoft.motanx.demo.impl.AnotherServiceImpl;
 import com.opensoft.motanx.demo.impl.DemoServiceImpl;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
-import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.ContextHandlerCollection;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,11 +22,8 @@ import java.util.List;
 public class RestTest {
     public static void main(String[] args) throws Exception {
         Server server = new Server(9000);
-        ContextHandlerCollection contexts = new ContextHandlerCollection();
-        server.setHandler(contexts);
-
-        Context root = new Context(contexts, "/", Context.SESSIONS);
-
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        server.setHandler(context);
         RestApplication application = new RestApplication();
         application.addResourceClasses(DemoService.class);
         application.addResourceClasses(AnotherService.class);
@@ -39,7 +35,7 @@ public class RestTest {
 //        servlet.setInitParameter("javax.ws.rs.Application", application.getClass().getName());
 //        servlet.setName("services");
 //        servlet.setForcedPath("services");
-        root.addServlet(servlet, "/" + DemoService.class.getName() + "/*");
+        context.addServlet(servlet, "/" + DemoService.class.getName() + "/*");
         server.start();
 //        server.join();
 

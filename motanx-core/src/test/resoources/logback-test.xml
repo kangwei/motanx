@@ -5,7 +5,8 @@
 
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder charset="UTF-8">
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %10logger- %msg%n</pattern>
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %10logger- %msg%n</pattern>-->
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
         </encoder>
     </appender>
 
@@ -47,6 +48,7 @@
     <logger name="com.opensymphony" level="INFO"/>
     <logger name="org.apache" level="WARN"/>
     <logger name="org.quartz" level="INFO"/>
+    <logger name="org.eclipse.jetty" level="ERROR"/>
     <logger name="org.mybatis" level="INFO">
     </logger>
     <logger name="org.springframework.transaction.support" level="INFO">

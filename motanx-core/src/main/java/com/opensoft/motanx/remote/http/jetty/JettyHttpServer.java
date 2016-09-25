@@ -5,18 +5,13 @@ import com.opensoft.motanx.core.UrlConstants;
 import com.opensoft.motanx.exception.MotanxFrameworkException;
 import com.opensoft.motanx.logger.Logger;
 import com.opensoft.motanx.logger.LoggerFactory;
-import com.opensoft.motanx.remote.http.HttpHandler;
 import com.opensoft.motanx.remote.http.HttpServer;
 import com.opensoft.motanx.remote.http.support.AbstractHttpServer;
-import com.opensoft.motanx.remote.http.support.DispatcherServlet;
-import com.opensoft.motanx.rpc.protocol.rest.RestApplication;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.ContextHandlerCollection;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.thread.QueuedThreadPool;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import javax.servlet.Servlet;
 
@@ -28,7 +23,7 @@ public class JettyHttpServer extends AbstractHttpServer implements HttpServer {
 
     private Server server;
 
-    private Context root;
+    private ServletContextHandler context;
 
     public JettyHttpServer(URL url) {
         super(url);
@@ -38,27 +33,28 @@ public class JettyHttpServer extends AbstractHttpServer implements HttpServer {
     @Override
     protected void doAddServlet(Servlet servlet, String path) {
         ServletHolder holder = new ServletHolder(servlet);
-        root.addServlet(holder, path);
+        context.addServlet(holder, path);
     }
 
     @Override
     protected boolean doInit() {
         int threadNum = url.getIntParameter(UrlConstants.threadNum.getName(), UrlConstants.threadNum.getInt());
-        QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
-        queuedThreadPool.setDaemon(true);
-        queuedThreadPool.setMaxThreads(threadNum);
-        queuedThreadPool.setMinThreads(threadNum);
-
+        QueuedThreadPool threadPool = new QueuedThreadPool();
+        threadPool.setDaemon(true);
+        threadPool.setMaxThreads(threadNum);
+        threadPool.setMinThreads(threadNum);
+        server = new Server();
         SelectChannelConnector connector = new SelectChannelConnector();
         connector.setHost(url.getHost());
         connector.setPort(url.getPort());
+        connector.setThreadPool(threadPool);
+        connector.setRequestBufferSize(8192);
+        connector.setReuseAddress(true);
 
-        server = new Server();
-        server.setThreadPool(queuedThreadPool);
         server.addConnector(connector);
-        ContextHandlerCollection contexts = new ContextHandlerCollection();
-        server.setHandler(contexts);
-        root = new Context(contexts, "/", Context.SESSIONS);
+        context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        server.setHandler(context);
 
         try {
             server.start();
