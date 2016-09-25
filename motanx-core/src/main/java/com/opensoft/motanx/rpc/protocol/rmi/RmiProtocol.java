@@ -56,7 +56,7 @@ public class RmiProtocol extends AbstractProtocol implements Protocol {
     }
 
     @Override
-    protected <T> Provider<T> doRefer(Class<T> type, URL url) {
+    protected <T> T doRefer(Class<T> type, URL url) {
         RmiProxyFactoryBean proxyFactoryBean = new RmiProxyFactoryBean();
         proxyFactoryBean.setServiceInterface(type);
         proxyFactoryBean.setCacheStub(true);
@@ -65,10 +65,7 @@ public class RmiProtocol extends AbstractProtocol implements Protocol {
         proxyFactoryBean.setRefreshStubOnConnectFailure(true);
         proxyFactoryBean.afterPropertiesSet();
 
-        T t = (T) proxyFactoryBean.getObject();
-        ProxyFactory proxyFactory = new JdkProxyFactory();
-        Provider<T> referer = proxyFactory.getReferer(t, type, url);
-        return referer;
+        return  (T) proxyFactoryBean.getObject();
     }
 
     @Override

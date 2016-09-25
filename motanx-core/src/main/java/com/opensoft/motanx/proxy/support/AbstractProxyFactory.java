@@ -19,15 +19,4 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
     }
 
     protected abstract <T> T doGetProxy(Class<T> cls, Invoker<T> invoker);
-
-    @Override
-    public <T> Provider<T> getReferer(T impl, Class<T> cls, URL url) {
-        if (impl == null) {
-            return null;
-        }
-
-        return doGetReferer(impl, cls, url);
-    }
-
-    protected abstract <T> Provider<T> doGetReferer(T impl, Class<T> cls, URL url);
 }

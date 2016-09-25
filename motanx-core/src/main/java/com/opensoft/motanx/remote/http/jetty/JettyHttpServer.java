@@ -73,7 +73,10 @@ public class JettyHttpServer extends AbstractHttpServer implements HttpServer {
     protected boolean doDestroy() {
         if (server != null) {
             try {
-                server.destroy();
+                if (server.isRunning()) {
+                    server.stop();
+                    server.destroy();
+                }
             } catch (Exception e) {
                 logger.error("failed to destroy jetty server on port {}", url.getPort(), e);
             }

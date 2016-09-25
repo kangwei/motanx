@@ -14,6 +14,7 @@ import com.opensoft.motanx.rpc.cluster.hastrategy.FailfastHaStrategy;
 import com.opensoft.motanx.rpc.cluster.loadbalance.RandomLoadBalance;
 import com.opensoft.motanx.rpc.cluster.support.DefaultCluster;
 import com.opensoft.motanx.rpc.support.DefaultProvider;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,10 +44,10 @@ public class JdkProxyFactoryTest {
     @Test
     public void test_get_proxy() {
         ProxyFactory proxyFactory = new JdkProxyFactory();
-        String s = Strings.repeat("a", 1024 * 50);
+        String s = Strings.repeat("a", 2);
         DemoService proxy = proxyFactory.getProxy(DemoService.class, cluster);
 
         String hello = proxy.sayHello(s);
-//        System.out.println(hello);
+        Assert.assertEquals(hello, s);
     }
 }

@@ -89,7 +89,7 @@ public class HessianProtocol extends AbstractProtocol implements Protocol {
     }
 
     @Override
-    protected <T> Provider<T> doRefer(Class<T> type, URL url) {
+    protected <T> T doRefer(Class<T> type, URL url) {
         HessianProxyFactory proxyFactory = new HessianProxyFactory();
         proxyFactory.setOverloadEnabled(true);
         proxyFactory.setConnectionFactory(new HttpClientConnectionFactory());
@@ -101,9 +101,7 @@ public class HessianProtocol extends AbstractProtocol implements Protocol {
         copyUrl.setProtocol("http");
 
         try {
-            T t = (T) proxyFactory.create(type, new java.net.URL(copyUrl.getIdentifyUrl()), this.getClass().getClassLoader());
-            ProxyFactory proxy = new JdkProxyFactory();
-            return proxy.getReferer(t, type, url);
+            return  (T) proxyFactory.create(type, new java.net.URL(copyUrl.getIdentifyUrl()), this.getClass().getClassLoader());
         } catch (MalformedURLException e) {
             throw new MotanxFrameworkException(e.getMessage(), e);
         }
@@ -112,5 +110,13 @@ public class HessianProtocol extends AbstractProtocol implements Protocol {
     @Override
     public int getDefaultPort() {
         return DEFAULT_PORT;
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (HttpServer server : servers.values()) {
+            server.destroy();
+        }
     }
 }

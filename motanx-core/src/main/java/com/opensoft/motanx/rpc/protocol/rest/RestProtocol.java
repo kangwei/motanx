@@ -149,17 +149,23 @@ public class RestProtocol extends AbstractProtocol implements Protocol {
     }
 
     @Override
-    protected <T> Provider<T> doRefer(Class<T> type, URL url) {
+    protected <T> T doRefer(Class<T> type, URL url) {
         URL copyUrl = url.copy();
         copyUrl.setProtocol("http");
         String address = copyUrl.getUri();
-        T t = JAXRSClientFactory.create(address, type, Arrays.asList(new JacksonJsonProvider()));
-        ProxyFactory proxy = new JdkProxyFactory();
-        return proxy.getReferer(t, type, url);
+        return JAXRSClientFactory.create(address, type, Arrays.asList(new JacksonJsonProvider()));
     }
 
     @Override
     public int getDefaultPort() {
         return DEFAULT_PORT;
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (HttpServer server : servers.values()) {
+            server.destroy();
+        }
     }
 }

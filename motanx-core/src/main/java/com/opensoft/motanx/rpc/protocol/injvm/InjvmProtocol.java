@@ -10,11 +10,11 @@ import com.opensoft.motanx.rpc.support.AbstractExporter;
 /**
  * Created by kangwei on 2016/9/24.
  */
-public class InjvmProtocol extends AbstractProtocol implements Protocol {
+public class InjvmProtocol implements Protocol {
     private Exporter exporter;
 
     @Override
-    protected <T> Exporter<T> doExport(Provider<T> provider) {
+    public <T> Exporter<T> export(Provider<T> provider) {
         exporter = new AbstractExporter(provider) {
             @Override
             public void unexport() {
@@ -25,12 +25,17 @@ public class InjvmProtocol extends AbstractProtocol implements Protocol {
     }
 
     @Override
-    protected <T> Provider<T> doRefer(Class<T> type, URL url) {
+    public <T> Provider<T> refer(Class<T> type, URL url) {
         return exporter.getProvider();
     }
 
     @Override
     public int getDefaultPort() {
         return 0;
+    }
+
+    @Override
+    public void destroy() {
+
     }
 }

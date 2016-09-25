@@ -100,19 +100,25 @@ public class WebServiceProtocol extends AbstractProtocol implements Protocol {
     }
 
     @Override
-    protected <T> Provider<T> doRefer(Class<T> type, URL url) {
+    protected <T> T doRefer(Class<T> type, URL url) {
         ClientProxyFactoryBean proxyFactoryBean = new ClientProxyFactoryBean();
         URL copyUrl = url.copy();
         copyUrl.setProtocol("http");
         proxyFactoryBean.setAddress(copyUrl.getIdentifyUrl());
         proxyFactoryBean.setServiceClass(type);
-        T t = (T) proxyFactoryBean.create();
-        ProxyFactory proxy = new JdkProxyFactory();
-        return proxy.getReferer(t, type, url);
+        return (T) proxyFactoryBean.create();
     }
 
     @Override
     public int getDefaultPort() {
         return DEFAULT_PORT;
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (HttpServer server : servers.values()) {
+            server.destroy();
+        }
     }
 }

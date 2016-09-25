@@ -20,9 +20,4 @@ public class JdkProxyFactory extends AbstractProxyFactory implements ProxyFactor
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return (T) Proxy.newProxyInstance(classLoader, new Class[]{cls}, new InvokerInvocationHandler(cls, invoker));
     }
-
-    @Override
-    protected <T> Provider<T> doGetReferer(final T impl, final Class<T> cls, URL url) {
-        return new DefaultProvider<T>(cls, url, impl);
-    }
 }

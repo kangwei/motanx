@@ -9,6 +9,7 @@ import com.opensoft.motanx.logger.LoggerFactory;
 import com.opensoft.motanx.rpc.Exporter;
 import com.opensoft.motanx.rpc.Protocol;
 import com.opensoft.motanx.rpc.Provider;
+import com.opensoft.motanx.rpc.support.DefaultProvider;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -52,12 +53,13 @@ public abstract class AbstractProtocol implements Protocol {
         if (url == null) {
             throw new MotanxFrameworkException("refer url is null");
         }
-        Provider<T> referer = doRefer(type, url);
+        T t = doRefer(type, url);
+        Provider<T> referer = new DefaultProvider<>(type, url, t);
         providers.add(referer);
         return referer;
     }
 
-    protected abstract <T> Provider<T> doRefer(Class<T> type, URL url);
+    protected abstract <T> T doRefer(Class<T> type, URL url);
 
     @Override
     public void destroy() {
