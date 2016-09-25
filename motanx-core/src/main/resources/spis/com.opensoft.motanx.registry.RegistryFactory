@@ -1,0 +1,2 @@
+com.opensoft.motanx.registry.local.LocalRegistryFactory
+com.opensoft.motanx.registry.zookeeper.ZookeeperRegistryFactory

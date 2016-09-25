@@ -1,0 +1,4 @@
+com.opensoft.motanx.rpc.protocol.rmi.RmiProtocol
+com.opensoft.motanx.rpc.protocol.hessian.HessianProtocol
+com.opensoft.motanx.rpc.protocol.webservice.WebServiceProtocol
+com.opensoft.motanx.rpc.protocol.rest.RestProtocol

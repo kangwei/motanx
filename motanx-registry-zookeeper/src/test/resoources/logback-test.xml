@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true" scanPeriod="60 seconds">
+
+    <property name="log.dir" value="../logs/biz"/>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %10logger- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/service-log-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <Prudent>true</Prudent>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %10logger- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FileError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${log.dir}/service-error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 60 days' worth of history -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date-[%level]-%thread-%10logger[%file-%line]-%msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!--<logger name="org.springframework" level="INFO"/>-->
+    <logger name="org.springframework.security.web" level="DEBUG"/>
+    <logger name="com.opensymphony" level="INFO"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.quartz" level="INFO"/>
+    <logger name="org.mybatis" level="INFO">
+    </logger>
+    <logger name="org.springframework.transaction.support" level="INFO">
+    </logger>
+    <!--<logger name="java.sql" level="INFO" additivity="false">
+        <appender-ref ref="SqlLogFile"/>
+    </logger>
+    <logger name="java.sql.ResultSet" level="INFO" additivity="false">
+        <appender-ref ref="SqlLogFile"/>
+    </logger>-->
+    <logger name="java.sql" level="DEBUG">
+    </logger>
+    <logger name="java.sql.ResultSet" level="DEBUG">
+    </logger>
+
+    <logger name="net.sf" level="INFO"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="stdout"/>
+        <!--<appender-ref ref="RollingFile"/>
+        <appender-ref ref="FileError"/>-->
+    </root>
+</configuration>
