@@ -4,10 +4,12 @@ import com.opensoft.motanx.logger.slf4j.Slf4jLoggerAdapter;
 
 /**
  * Logger工厂，用于获取Logger的实例
+ * (简单工厂模式)
  * Created by kangwei on 2016/8/24.
  */
 public final class LoggerFactory {
-    private LoggerFactory(){}
+    private LoggerFactory() {
+    }
 
     public static Logger getLogger(Class cls) {
         String logName = "slf4j";

@@ -11,5 +11,13 @@ import com.opensoft.motanx.rpc.Provider;
  */
 @Spi
 public interface ProxyFactory {
+    /**
+     * get proxy of cls
+     *
+     * @param cls
+     * @param invoker
+     * @param <T>
+     * @return
+     */
     <T> T getProxy(Class<T> cls, Invoker<T> invoker);
 }

@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.opensoft.motanx.exception.MotanxFrameworkException;
 import com.opensoft.motanx.logger.Logger;
 import com.opensoft.motanx.logger.LoggerFactory;
+import com.opensoft.motanx.utils.CloseableUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,12 +69,25 @@ public class ExtensionLoader<T> {
         return extensionLoaderMap.get(type);
     }
 
+    /**
+     * load extensionLoader and put into locader cache
+     *
+     * @param type extensionLoader type
+     * @param <T>
+     */
     private static synchronized <T> void loadExtensionLoaderMap(Class<T> type) {
         if (!extensionLoaderMap.containsKey(type)) {
             extensionLoaderMap.putIfAbsent(type, new ExtensionLoader<T>(type));
         }
     }
 
+    /**
+     * check extensionLoader type
+     * isNull, is Interface and is Spi
+     *
+     * @param type extensionLoader type
+     * @param <T>
+     */
     private static <T> void checkType(Class<T> type) {
         if (type == null) {
             throw new MotanxFrameworkException("spi type must be not null");
@@ -87,16 +101,33 @@ public class ExtensionLoader<T> {
         }
     }
 
+    /**
+     * private constructor
+     *
+     * @param type
+     */
     private ExtensionLoader(Class<T> type) {
         this.type = type;
         this.classLoader = Thread.currentThread().getContextClassLoader();
     }
 
+    /**
+     * get extensionLoader class witch implement extensionLoader type
+     *
+     * @param name spi name
+     * @return extensionLoader class
+     */
     public Class<T> getExtensionClass(String name) {
         initIfNeed();
         return extensionClasses.get(name);
     }
 
+    /**
+     * get extension class instance by spi name
+     *
+     * @param name spi name
+     * @return extension class instance
+     */
     public T getExtension(String name) {
         initIfNeed();
         Class<T> extensionClass = getExtensionClass(name);
@@ -116,9 +147,18 @@ public class ExtensionLoader<T> {
         }
     }
 
+    /**
+     * get singleton instance of extension class by spi name
+     *
+     * @param name spi name
+     * @return singleton instance
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
     private T getSingletonInstance(String name) throws IllegalAccessException, InstantiationException {
         if (!singletonInstances.containsKey(name)) {
             synchronized (singletonInstances) {
+                //double check
                 if (!singletonInstances.containsKey(name)) {
                     Class<T> extensionClass = getExtensionClass(name);
                     T t = extensionClass.newInstance();
@@ -137,6 +177,9 @@ public class ExtensionLoader<T> {
         }
     }
 
+    /**
+     * load extensionLoader
+     */
     private synchronized void loadExtensionLoader() {
         //再次检查，防止并发加载
         if (init) {
@@ -164,32 +207,21 @@ public class ExtensionLoader<T> {
         }
     }
 
+    /**
+     * parse single url
+     *
+     * @param url
+     */
     private void parseUrl(URL url) {
         InputStream inputStream = null;
         BufferedReader reader = null;
         try {
             inputStream = url.openStream();
             reader = new BufferedReader(new InputStreamReader(inputStream));
-            List<String> classNames = Lists.newArrayList();
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                if (!classNames.contains(line)) {
-                    classNames.add(line);
-                }
-            }
+            List<String> classNames = readAndParse2List(inputStream, reader);
+
             for (String className : classNames) {
-                Class<T> aClass;
-                if (classLoader == null) {
-                    aClass = (Class<T>) Class.forName(className);
-                } else {
-                    aClass = (Class<T>) Class.forName(className, true, classLoader);
-                }
-
-                checkExtensionClass(aClass);
-                Spi spi = aClass.getAnnotation(Spi.class);
-                String spiName = spi.name();
-                extensionClasses.putIfAbsent(spiName, aClass);
-
+                change2ClassAndPutIntoCache(className);
             }
         } catch (IOException e) {
             logger.error("read file " + url.toString() + " error", e);
@@ -198,21 +230,34 @@ public class ExtensionLoader<T> {
             logger.error(e.getMessage(), e);
             throw new MotanxFrameworkException(e.getMessage(), e);
         } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    logger.error("close inputStream error", e);
-                }
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    logger.error("close reader error", e);
-                }
+            CloseableUtils.close(inputStream, reader);
+        }
+    }
+
+    private void change2ClassAndPutIntoCache(String className) throws ClassNotFoundException {
+        Class<T> aClass;
+        if (classLoader == null) {
+            aClass = (Class<T>) Class.forName(className);
+        } else {
+            aClass = (Class<T>) Class.forName(className, true, classLoader);
+        }
+
+        checkExtensionClass(aClass);
+        Spi spi = aClass.getAnnotation(Spi.class);
+        String spiName = spi.name();
+        extensionClasses.putIfAbsent(spiName, aClass);
+    }
+
+    private List<String> readAndParse2List(InputStream inputStream, BufferedReader reader) throws IOException {
+        List<String> classNames = Lists.newArrayList();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (!classNames.contains(line)) {
+                classNames.add(line);
             }
         }
+
+        return classNames;
     }
 
     private void checkExtensionClass(Class<?> aClass) {

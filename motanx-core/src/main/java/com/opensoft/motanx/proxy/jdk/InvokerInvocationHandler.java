@@ -24,15 +24,21 @@ public class InvokerInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        String methodName = method.getName();
+        boolean isMethodInheritFromObject = "toString".equals(methodName)
+                || "equals".equals(methodName)
+                || "hashCode".equals(methodName);
+        if (isMethodInheritFromObject) {
+            return method.invoke(proxy, args);
+        }
         DefaultRequest request = new DefaultRequest();
-        request.setMethodName(method.getName());
+        request.setMethodName(methodName);
         request.setInterfaceName(cls.getName());
         request.setRequestId(UUID.randomUUID().toString());
         request.setArgs(args);
         request.setParameterTypes(method.getParameterTypes());
         RpcContext.getContext().setStartTime(System.nanoTime());
         Response response = invoker.invoke(request);
-        System.out.println(response);
         return response.getValue();
     }
 }

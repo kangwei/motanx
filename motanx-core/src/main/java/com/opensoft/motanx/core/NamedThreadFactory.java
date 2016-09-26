@@ -29,7 +29,7 @@ public class NamedThreadFactory implements ThreadFactory {
     @Override
     public Thread newThread(Runnable r) {
         Thread thread = new Thread(r);
-        thread.setName(prefix + "-thread");
+        thread.setName(prefix + "-" + threadNum.addAndGet(1) + "-thread");
         thread.setDaemon(deamon);
         return thread;
     }

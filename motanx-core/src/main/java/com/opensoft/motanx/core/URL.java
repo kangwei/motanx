@@ -1,13 +1,11 @@
 package com.opensoft.motanx.core;
 
-import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.google.common.collect.Maps;
 import com.opensoft.motanx.exception.ErrorCode;
 import com.opensoft.motanx.exception.MotanxIllegalArgumentException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,6 +21,9 @@ public class URL {
 
     //interfaceName
     private String path;
+
+    //上下文根，服务提供者可自行指定，用于路由
+    private String context;
 
     private Map<String, String> parameters;
 
@@ -169,6 +170,11 @@ public class URL {
         }
     }
 
+    /**
+     * 获取版本信息，版本带在url的parameters中
+     *
+     * @return 版本
+     */
     public String getVersion() {
         return getParameter(UrlConstants.version.getName(), UrlConstants.version.getString());
     }

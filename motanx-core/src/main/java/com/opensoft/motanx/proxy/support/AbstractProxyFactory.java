@@ -1,9 +1,7 @@
 package com.opensoft.motanx.proxy.support;
 
-import com.opensoft.motanx.core.URL;
 import com.opensoft.motanx.proxy.ProxyFactory;
 import com.opensoft.motanx.rpc.Invoker;
-import com.opensoft.motanx.rpc.Provider;
 
 /**
  * Created by kangwei on 2016/8/28.
