@@ -91,7 +91,7 @@ public abstract class AbstractProvider<T> extends AbstractNode implements Provid
             return response;
         } catch (Exception e) {
             //TODO:日志需要记录调用方的IP和端口
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             DefaultResponse response = new DefaultResponse();
             response.setException(e);
             response.setProcessTime(System.currentTimeMillis() - startTime);

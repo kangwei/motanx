@@ -1,5 +1,6 @@
 package com.opensoft.motanx.rpc.protocol.injvm;
 
+import com.opensoft.motanx.core.Spi;
 import com.opensoft.motanx.core.URL;
 import com.opensoft.motanx.rpc.Exporter;
 import com.opensoft.motanx.rpc.Protocol;
@@ -10,6 +11,7 @@ import com.opensoft.motanx.rpc.support.AbstractExporter;
 /**
  * Created by kangwei on 2016/9/24.
  */
+@Spi(name = "injvm")
 public class InjvmProtocol implements Protocol {
     private Exporter exporter;
 

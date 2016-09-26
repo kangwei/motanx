@@ -22,7 +22,7 @@ public class RestProtocolTest extends ProtocolBaseTest {
     private static final Logger log = LoggerFactory.getLogger(RestProtocolTest.class);
     @Before
     public void prepare() {
-        prepare("rest", 9000, "jetty");
+        prepare("rest", 9000, "tomcat");
     }
 
     @After
@@ -33,7 +33,7 @@ public class RestProtocolTest extends ProtocolBaseTest {
     @Test
     @Ignore
     public void test_on_stress() throws IOException, InterruptedException {
-        test_on_stress(Strings.repeat("a", 1024), 20);
+        test_on_stress(Strings.repeat("a", 1024), 32);
     }
 
     @Test

@@ -20,6 +20,8 @@ import com.opensoft.motanx.rpc.support.DefaultRequest;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by kangwei on 2016/9/25.
@@ -32,6 +34,7 @@ public class ProtocolBaseTest {
     protected Provider<AnotherService> anotherProvider;
     protected DefaultRequest request;
     protected Protocol protocol;
+    private static volatile AtomicInteger requestNum = new AtomicInteger(0);
 
     public void prepare(String protocolName, int port, String server) {
         url = new URL(protocolName, "localhost", port, "com.opensoft.motanx.demo.DemoService");
@@ -54,20 +57,24 @@ public class ProtocolBaseTest {
         request.setMethodName("hello");
         request.setParameterTypes(new Class[]{String.class});
         request.setArgs(new Object[]{requestObj});
+        final Provider<DemoService> refer = protocol.refer(DemoService.class, url);
         final CountDownLatch countDownLatch = new CountDownLatch(threadNum);
+        long start = System.currentTimeMillis();
         for (int i = 0; i < threadNum; i++) {
-            final int index = i;
             new Thread() {
                 @Override
                 public void run() {
-                    Provider<DemoService> refer = protocol.refer(DemoService.class, url);
-                    Response response = refer.invoke(request);
-                    log.info("thread num {} complete, time loss : {}", index, response.getProcessTime());
+                    while (requestNum.incrementAndGet() < 10000) {
+                        Response response = refer.invoke(request);
+                        log.info("{} complete, time loss : {}", requestNum.get(), response.getProcessTime());
+                    }
                     countDownLatch.countDown();
                 }
             }.start();
         }
         countDownLatch.await();
+        long time = System.currentTimeMillis() - start;
+        log.info("all done, time loss : {}, qps : {}", time, ((float)10000 / time * 1000L));
     }
 
     public Response test_on_single_string() {

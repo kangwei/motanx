@@ -9,6 +9,7 @@ import com.opensoft.motanx.rpc.Exporter;
 import com.opensoft.motanx.rpc.Protocol;
 import com.opensoft.motanx.rpc.Provider;
 import com.opensoft.motanx.rpc.Response;
+import com.opensoft.motanx.rpc.protocol.ProtocolBaseTest;
 import com.opensoft.motanx.rpc.support.DefaultProvider;
 import com.opensoft.motanx.rpc.support.DefaultRequest;
 import org.junit.Assert;
@@ -22,45 +23,17 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by kangwei on 2016/8/27.
  */
-public class RmiProtocolTest {
-    private URL url;
-    private Provider<DemoService> provider;
-    private DefaultRequest request;
+public class RmiProtocolTest extends ProtocolBaseTest {
 
     @Before
     public void prepare() {
-        url = new URL("rmi", "localhost", 1099, "com.opensoft.motanx.demo.DemoService");
-        provider = new DefaultProvider<>(DemoService.class, url, new DemoServiceImpl());
-        request = new DefaultRequest();
-        request.setInterfaceName("com.opensoft.motanx.demo.DemoService");
-        request.setMethodName("hello");
+        prepare("rmi", 1099, "");
     }
 
     @Test
     @Ignore
     public void test_on_stress() throws IOException, InterruptedException {
-        final Protocol protocol = new RmiProtocol();
-        protocol.export(provider);
-//        final Protocol p = protocol;
-        String s = Strings.repeat("a", 1024 * 1);
-        System.out.println(s.getBytes().length);
-        request.setMethodName("hello");
-        request.setParameterTypes(new Class[]{String.class});
-        request.setArgs(new Object[]{s});
-//        Provider<DemoService> refer = protocol.refer(DemoService.class, url);
-//        Response response = refer.invoke(request);
-//        System.out.println(response.toString());
-        for (int i = 0; i < 100; i++) {
-            new Thread() {
-                @Override
-                public void run() {
-                    Provider<DemoService> refer = protocol.refer(DemoService.class, url);
-                    Response response = refer.invoke(request);
-                    System.out.println(response.toString());
-                }
-            }.start();
-        }
-        TimeUnit.SECONDS.sleep(2);
+        test_on_stress(Strings.repeat("a", 1024), 32);
     }
 
     @Test

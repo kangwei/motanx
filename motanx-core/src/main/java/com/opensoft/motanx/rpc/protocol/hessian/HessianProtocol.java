@@ -92,7 +92,7 @@ public class HessianProtocol extends AbstractProtocol implements Protocol {
     protected <T> T doRefer(Class<T> type, URL url) {
         HessianProxyFactory proxyFactory = new HessianProxyFactory();
         proxyFactory.setOverloadEnabled(true);
-        proxyFactory.setConnectionFactory(new HttpClientConnectionFactory());
+//        proxyFactory.setConnectionFactory(new HttpClientConnectionFactory());
         int timeout = url.getIntParameter(UrlConstants.connectionTimeout.getName(), UrlConstants.connectionTimeout.getInt());
         proxyFactory.setConnectTimeout(timeout);
         proxyFactory.setReadTimeout(timeout);

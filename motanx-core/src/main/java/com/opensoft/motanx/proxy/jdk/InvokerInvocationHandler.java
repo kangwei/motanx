@@ -30,7 +30,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
         request.setRequestId(UUID.randomUUID().toString());
         request.setArgs(args);
         request.setParameterTypes(method.getParameterTypes());
-        RpcContext.getContext().setStartTime(System.currentTimeMillis());
+        RpcContext.getContext().setStartTime(System.nanoTime());
         Response response = invoker.invoke(request);
         System.out.println(response);
         return response.getValue();
