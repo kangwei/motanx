@@ -15,21 +15,12 @@ public class RpcContext {
         }
     };
 
-    private Request request;
     private InetSocketAddress remoteAddress;
     private InetSocketAddress localAddress;
     private long startTime;
 
     public static RpcContext getContext() {
         return CONTEXT.get();
-    }
-
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
-    public Request getRequest() {
-        return request;
     }
 
     public InetSocketAddress getRemoteAddress() {

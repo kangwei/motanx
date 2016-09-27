@@ -1,23 +1,15 @@
 package com.opensoft.motanx.rpc.protocol.hessian;
 
 import com.google.common.base.Strings;
-import com.opensoft.motanx.core.URL;
 import com.opensoft.motanx.core.UrlConstants;
-import com.opensoft.motanx.demo.AnotherService;
 import com.opensoft.motanx.demo.DemoPojo;
-import com.opensoft.motanx.demo.DemoService;
-import com.opensoft.motanx.demo.impl.AnotherServiceImpl;
-import com.opensoft.motanx.demo.impl.DemoServiceImpl;
 import com.opensoft.motanx.logger.Logger;
 import com.opensoft.motanx.logger.LoggerFactory;
-import com.opensoft.motanx.rpc.*;
+import com.opensoft.motanx.rpc.Response;
 import com.opensoft.motanx.rpc.protocol.ProtocolBaseTest;
-import com.opensoft.motanx.rpc.support.DefaultProvider;
-import com.opensoft.motanx.rpc.support.DefaultRequest;
 import org.junit.*;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kangwei on 2016/9/11.
@@ -31,7 +23,7 @@ public class HessianProtocolTest extends ProtocolBaseTest {
 
     @After
     public void after() {
-        super.after();
+//        super.after();
     }
 
     @Test
@@ -43,9 +35,9 @@ public class HessianProtocolTest extends ProtocolBaseTest {
     @Test
     public void test_hessian_protocol() {
         Response response = test_on_single_string();
-        log.info(response.toString());
         Assert.assertNotNull(response);
         Assert.assertEquals(response.getValue(), "hello rpc");
+        log.info(response.toString());
         Response response1 = test_on_another_provider();
         log.info(response1.toString());
         Assert.assertNotNull(response1);

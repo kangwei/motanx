@@ -7,10 +7,11 @@ public enum UrlConstants {
     version("version", "1.0"),
     delay("delay", 30000),
     filters("filters", ""),
+    async("async", false),
     server("server", "jetty"),
     nodeType("nodeType", "provider"),
     threadNum("threadNum", 200),
-    connectionTimeout("connectionTimeout", 1000);
+    connectionTimeout("connectionTimeout", 5000);
 
     UrlConstants(String name, String s) {
         this.name = name;

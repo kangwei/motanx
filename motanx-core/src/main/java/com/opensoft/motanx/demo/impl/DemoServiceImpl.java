@@ -20,6 +20,11 @@ public class DemoServiceImpl implements DemoService {
 
     @Override
     public String hello() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return "hello rpc";
     }
 

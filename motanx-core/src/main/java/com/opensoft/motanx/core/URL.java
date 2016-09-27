@@ -144,10 +144,6 @@ public class URL {
         return parameters.get(key) == null ? defaultValue : parameters.get(key);
     }
 
-    public int getIntParameter(String key) {
-        return getIntParameter(key, -1);
-    }
-
     public int getIntParameter(String key, int defaultValue) {
         if (parameters.containsKey(key)) {
             String value = parameters.get(key);
@@ -157,8 +153,13 @@ public class URL {
         }
     }
 
-    public long getLongParameter(String key) {
-        return getLongParameter(key, -1L);
+    public boolean getBooleanParameter(String key, boolean defaultValue) {
+        if (parameters.containsKey(key)) {
+            String value = parameters.get(key);
+            return Boolean.valueOf(value);
+        } else {
+            return defaultValue;
+        }
     }
 
     public long getLongParameter(String key, long defaultValue) {

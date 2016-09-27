@@ -3,12 +3,14 @@ package com.opensoft.motanx.rpc.protocol;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.opensoft.motanx.core.URL;
+import com.opensoft.motanx.core.UrlConstants;
 import com.opensoft.motanx.exception.MotanxFrameworkException;
 import com.opensoft.motanx.logger.Logger;
 import com.opensoft.motanx.logger.LoggerFactory;
 import com.opensoft.motanx.rpc.Exporter;
 import com.opensoft.motanx.rpc.Protocol;
 import com.opensoft.motanx.rpc.Provider;
+import com.opensoft.motanx.rpc.support.AsyncProvider;
 import com.opensoft.motanx.rpc.support.DefaultProvider;
 
 import java.util.List;
@@ -54,7 +56,13 @@ public abstract class AbstractProtocol implements Protocol {
             throw new MotanxFrameworkException("refer url is null");
         }
         T t = doRefer(type, url);
-        Provider<T> referer = new DefaultProvider<>(type, url, t);
+        boolean isAsync = url.getBooleanParameter(UrlConstants.async.getName(), UrlConstants.async.getBoolean());
+        Provider<T> referer;
+        if (isAsync) {
+            referer = new AsyncProvider<T>(type, url, t);
+        } else {
+            referer = new DefaultProvider<T>(type, url, t);
+        }
         providers.add(referer);
         return referer;
     }

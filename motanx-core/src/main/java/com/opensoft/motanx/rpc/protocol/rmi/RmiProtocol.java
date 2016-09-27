@@ -5,8 +5,6 @@ import com.opensoft.motanx.core.URL;
 import com.opensoft.motanx.exception.MotanxFrameworkException;
 import com.opensoft.motanx.logger.Logger;
 import com.opensoft.motanx.logger.LoggerFactory;
-import com.opensoft.motanx.proxy.ProxyFactory;
-import com.opensoft.motanx.proxy.jdk.JdkProxyFactory;
 import com.opensoft.motanx.rpc.Exporter;
 import com.opensoft.motanx.rpc.Protocol;
 import com.opensoft.motanx.rpc.Provider;

@@ -12,12 +12,12 @@ import java.util.Map;
  * Created by kangwei on 2016/6/26.
  */
 public class DefaultResponse implements Response, Serializable {
-    private Object value;
-    private Exception exception;
-    private String version = MotanxConstants.DEFAULT_VERSION;
-    private String requestId;
-    private long processTime;
-    private Map<String, String> attachment;
+    protected Object value;
+    protected Exception exception;
+    protected String version = MotanxConstants.DEFAULT_VERSION;
+    protected String requestId;
+    protected long processTime;
+    protected Map<String, String> attachment;
 
     public Object getValue() {
         return value;

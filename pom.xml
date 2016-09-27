@@ -12,6 +12,7 @@
         <module>motanx-core</module>
         <module>motanx-registry-redis</module>
         <module>motanx-registry-zookeeper</module>
+        <module>motanx-transport-netty</module>
     </modules>
 
     <dependencies>

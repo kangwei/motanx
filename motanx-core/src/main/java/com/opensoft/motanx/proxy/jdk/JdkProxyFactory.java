@@ -1,12 +1,9 @@
 package com.opensoft.motanx.proxy.jdk;
 
 import com.opensoft.motanx.core.Spi;
-import com.opensoft.motanx.core.URL;
 import com.opensoft.motanx.proxy.ProxyFactory;
 import com.opensoft.motanx.proxy.support.AbstractProxyFactory;
 import com.opensoft.motanx.rpc.Invoker;
-import com.opensoft.motanx.rpc.Provider;
-import com.opensoft.motanx.rpc.support.DefaultProvider;
 
 import java.lang.reflect.Proxy;
 
